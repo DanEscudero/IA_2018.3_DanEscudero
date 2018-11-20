@@ -2,6 +2,10 @@
 
 ## UFABC AI Project
 
+Daniel Escudero - 11005716
+
+https://danescudero.github.io/IA_2018.3_DanEscudero/
+
 This is a genetic algorithm to make rockets - which initially starts moving randomly - evolve and hit a target. PixiJS was used to make the visualization.
 
 ---
