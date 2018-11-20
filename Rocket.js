@@ -36,16 +36,25 @@ class Rocket extends PIXI.Container {
         this._drawRocket();
     }
 
+    /**
+     * Returns final position considering current position and genes
+     */
     getFinalPosition() {
         const { x, y } = this._dna.getGenesExpression();
         return { x: this.x + x, y: this.y + y };
     }
 
+    /**
+     * Returns next gene
+     */
     getNextGene() {
         const idx = ++this._geneIndex % (this._dna.DNALength - 1);
         return this._dna.genes[idx + 1];
     }
 
+    /**
+     * Checks if rocket is off view bounds
+     */
     isOffBounds() {
         const { rocketHeight, rocketWidth, entranceHeight } = this._style;
         return (
@@ -65,13 +74,13 @@ class Rocket extends PIXI.Container {
     }
 
     /**
+     * Draws rocket
      * NOTE on points naming:
-     *      C
-     *     /\
-     *    /  \
-     *   /    \
-     *  /  __  \
-     * /__| A|__\
+     *     C
+     *    /\
+     *   / A\
+     *  / /\ \
+     * /_/  \_\
      * D        B
      */
     _getPathPoints() {

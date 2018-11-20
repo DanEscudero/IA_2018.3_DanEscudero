@@ -1,4 +1,8 @@
 class Target extends PIXI.Container {
+    get radius() {
+        return this._radius;
+    }
+
     constructor({ radius = 50 } = {}) {
         super();
 
@@ -16,10 +20,18 @@ class Target extends PIXI.Container {
         this._drawTarget();
     }
 
+    /**
+     * Checks if a given { x, y } position is inBounds
+     * @param {{x,y}} position to be checked
+     * @return {boolean} true iff { x, y } is in target bounds
+     */
     isInBounds({ x, y }) {
         return euclidianDistance(this, { x, y }) <= this._radius;
     }
 
+    /**
+     * Draws target
+     */
     _drawTarget() {
         this._graphics.clear();
 

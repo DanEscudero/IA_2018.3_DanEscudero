@@ -12,6 +12,11 @@ class Population {
         this._rockets = Array(this._popSize);
     }
 
+    /**
+     * Returns object containign some informations.
+     * Some of it was used for debugging, and was not removed from code.
+     * Some of it is written to the view.
+     */
     getReport() {
         return {
             counts: this._getDirectionsPercentage(),
@@ -21,6 +26,9 @@ class Population {
         };
     }
 
+    /**
+     * Initialize population (create rockets)
+     */
     initialize() {
         for (let iRocket = 0; iRocket < this._popSize; iRocket++) {
             const rocket = new Rocket(this._DNALength, this._individualMR);
@@ -31,6 +39,9 @@ class Population {
         }
     }
 
+    /**
+     * Update all rockets positions
+     */
     update() {
         this._rockets.forEach((rocket) => {
             const nextMove = rocket.getNextGene();
@@ -40,6 +51,7 @@ class Population {
                 rocket.y += nextMove.y * speed;
             }
 
+            // Stop rocket if it is off bounds
             if (rocket.isOffBounds()) {
                 rocket.x = Math.min(rocket.x, width);
                 rocket.x = Math.max(rocket.x, 0);
@@ -52,11 +64,18 @@ class Population {
         });
     }
 
+    /**
+     * Assigns fitness value for a rocket, calculated by fitness function
+     * (which is passed as attribute)
+     * @param {function} fitnessFunction function that returns fitness of an
+     * individual rocket
+     */
     evaluate(fitnessFunction) {
         this._rockets.forEach((rocket) => {
             rocket.dna.fitness = fitnessFunction(rocket);
         });
 
+        // Normalizes fitness values
         this._rockets.sort((a, b) => b.dna.fitness - a.dna.fitness);
         const topFitness = this._rockets[0].fitness;
         this._rockets.forEach((rocket) => {
@@ -64,6 +83,9 @@ class Population {
         });
     }
 
+    /**
+     * Selects rockets that should die or not
+     */
     select() {
         this._rockets.forEach((rocket, idx) => {
             // TendenceToDie gets bigger as we get to the end of the array
@@ -82,6 +104,10 @@ class Population {
         });
     }
 
+    /**
+     * Repopulates population array (Any rocket from 'old generation' will be
+     * left behind. All of them will generate children and die soon after)
+     */
     repopulate() {
         const newChildren = [];
 
@@ -107,15 +133,20 @@ class Population {
         });
     }
 
+    /**
+     * Generates a new child from population array
+     */
     _getNewChild() {
         let parent1, parent2;
         parent1 = randomInArray(this._rockets);
         parent2 = randomInArray(this._rockets);
 
+        // Pick random parents untiul their different.
         while (parent1 === parent2) {
             parent2 = randomInArray(this._rockets);
         }
 
+        // Generate child
         const childDNA = DNA.reproduce(
             parent1.dna,
             parent2.dna,
@@ -126,6 +157,9 @@ class Population {
         return new Rocket(this._DNALength, this._individualMR, childDNA);
     }
 
+    /**
+     * Average fitness, for statistical purposes
+     */
     _getAverageFitness() {
         let sum = 0;
         this._rockets.forEach((rocket) => {
@@ -135,6 +169,9 @@ class Population {
         return Number((sum / this._popSize).toFixed(3));
     }
 
+    /**
+     * Average rockets end position, for debug/statistical purposes
+     */
     _getAverageTarget() {
         let sumTargets = { x: 0, y: 0 };
         this._rockets.forEach((rocket) => {
@@ -149,6 +186,12 @@ class Population {
         };
     }
 
+    /**
+     * Info about rockets genes, for debug/statistical purposes
+     *
+     * Returns object containing percentage of genes of each direction, and
+     * average speed
+     */
     _getDirectionsPercentage() {
         // Initialize empty counts
         const counts = {
@@ -177,7 +220,7 @@ class Population {
             counts['speed'] += genes[0];
         });
 
-        // Normalize counts
+        // Normalize info
         const dirs = Object.keys(counts);
         dirs.forEach((dir) => {
             if (dir !== 'speed') {
